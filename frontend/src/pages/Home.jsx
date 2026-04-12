@@ -35,6 +35,7 @@ export default function Home({ darkMode, setDarkMode }) {
     );
   };
 
+  const tabs = [
     { id: 'churches', name: 'Churches', icon: '⛪' },
     { id: 'preachers', name: 'Preachers', icon: '👤' },
     { id: 'missionaries', name: 'Missionaries', icon: '🌍' },
