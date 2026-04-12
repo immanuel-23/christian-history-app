@@ -7,6 +7,7 @@ export default function Home({ darkMode, setDarkMode }) {
   const [preachers, setPreachers] = useState([]);
   const [hymns, setHymns] = useState([]);
   const [events, setEvents] = useState([]);
+  const [missionaries, setMissionaries] = useState([]);
   const [verse, setVerse] = useState(null);
 
   const [activeTab, setActiveTab] = useState('churches');
@@ -20,6 +21,7 @@ export default function Home({ darkMode, setDarkMode }) {
     axios.get(`${apiBase}/preachers`).then(res => setPreachers(res.data)).catch(console.error);
     axios.get(`${apiBase}/hymns`).then(res => setHymns(res.data)).catch(console.error);
     axios.get(`${apiBase}/events`).then(res => setEvents(res.data)).catch(console.error);
+    axios.get(`${apiBase}/missionaries`).then(res => setMissionaries(res.data)).catch(console.error);
     axios.get(`${apiBase}/bible-verses`).then(res => {
       if (res.data.length > 0) setVerse(res.data[res.data.length - 1]);
     }).catch(console.error);
@@ -33,9 +35,9 @@ export default function Home({ darkMode, setDarkMode }) {
     );
   };
 
-  const tabs = [
     { id: 'churches', name: 'Churches', icon: '⛪' },
     { id: 'preachers', name: 'Preachers', icon: '👤' },
+    { id: 'missionaries', name: 'Missionaries', icon: '🌍' },
     { id: 'hymns', name: 'Hymns', icon: '🎶' },
     { id: 'events', name: 'Moments', icon: '📜' },
   ];
@@ -151,6 +153,15 @@ export default function Home({ darkMode, setDarkMode }) {
               ))}
             </motion.div>
           )}
+
+          {/* Missionaries View */}
+          {activeTab === 'missionaries' && (
+            <motion.div key="missionaries" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filterItems(missionaries, ['name', 'work', 'lifeHistory']).map(missionary => (
+                <Card key={missionary.id} item={missionary} type="missionary" onClick={() => setSelectedItem({ ...missionary, type: 'missionary' })} />
+              ))}
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
@@ -179,10 +190,10 @@ const Card = ({ item, type, onClick }) => (
     <div className="p-6">
       <h3 className="text-xl font-bold mb-1 truncate">{item.name || item.title}</h3>
       <p className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-3">
-        {item.location || item.author} {item.yearEstablished && `• ${item.yearEstablished}`}
+        {item.location || item.author || item.work} {item.yearEstablished && `• ${item.yearEstablished}`} {item.servicePeriod && `• ${item.servicePeriod}`}
       </p>
       <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed">
-        {item.description || item.lyrics}
+        {item.description || item.lyrics || item.lifeHistory}
       </p>
     </div>
   </motion.div>
@@ -254,10 +265,12 @@ const DetailModal = ({ item, onClose }) => {
             {item.location && <span className="bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-full">📍 {item.location}</span>}
             {item.author && <span className="bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-full">✍️ {item.author}</span>}
             {item.eventDate && <span className="bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-full">📅 {item.eventDate}</span>}
+            {item.servicePeriod && <span className="bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-full">📅 {item.servicePeriod}</span>}
+            {item.work && <span className="bg-slate-100 dark:bg-white/5 px-4 py-2 rounded-full">🌍 {item.work}</span>}
           </div>
 
           <div className="prose dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 leading-relaxed space-y-4 text-lg">
-            <p className="whitespace-pre-line">{item.description || item.biography || item.lyrics}</p>
+            <p className="whitespace-pre-line">{item.description || item.biography || item.lyrics || item.lifeHistory}</p>
             {item.theologyFocus && <div className="p-6 rounded-3xl bg-blue-50 dark:bg-blue-900/20 text-blue-900 dark:text-blue-300 italic">“{item.theologyFocus}”</div>}
             {item.significance && <div className="p-6 rounded-3xl bg-amber-50 dark:bg-amber-900/20 text-amber-900 dark:text-amber-300 font-medium">Historical Significance: {item.significance}</div>}
           </div>

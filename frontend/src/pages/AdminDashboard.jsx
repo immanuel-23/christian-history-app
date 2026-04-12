@@ -16,6 +16,7 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
     name: '', title: '', eventName: '', verseText: '', reference: '',
     location: '', yearEstablished: '', yearWritten: '', 
     description: '', biography: '', theologyFocus: '', significance: '', lyrics: '',
+    work: '', lifeHistory: '', servicePeriod: '',
     imageUrl: '', audioUrl: '', author: '', dateOfBirth: '', dateOfDeath: '', eventDate: ''
   });
   
@@ -37,6 +38,7 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
       name: '', title: '', eventName: '', verseText: '', reference: '',
       location: '', yearEstablished: '', yearWritten: '', 
       description: '', biography: '', theologyFocus: '', significance: '', lyrics: '',
+      work: '', lifeHistory: '', servicePeriod: '',
       imageUrl: '', audioUrl: '', author: '', dateOfBirth: '', dateOfDeath: '', eventDate: ''
     });
     setIsEditing(false);
@@ -156,6 +158,7 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
               {[
                 { id: 'churches', label: 'Churches', icon: '⛪' },
                 { id: 'preachers', label: 'Preachers', icon: '👤' },
+                { id: 'missionaries', label: 'Missionaries', icon: '🌍' },
                 { id: 'hymns', label: 'Hymns', icon: '🎶' },
                 { id: 'events', label: 'Moments', icon: '📜' },
                 { id: 'bible-verses', label: 'Daily Verse', icon: '📖' }
@@ -308,21 +311,28 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
                       <>
                         <input type="text" placeholder="Full Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="aura-admin-input h-12 md:h-14 text-base md:text-lg" required />
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <label className="block space-y-1 group">
-                            <span className="text-[10px] font-black text-slate-400 px-2 uppercase tracking-widest group-focus-within:text-blue-600 transition-colors">Date of Birth</span>
-                            <div className="relative">
-                              <input type="date" value={formData.dateOfBirth} onChange={e => setFormData({...formData, dateOfBirth: e.target.value})} className="aura-admin-input h-12" />
-                            </div>
-                          </label>
-                          <label className="block space-y-1 group">
-                            <span className="text-[10px] font-black text-slate-400 px-2 uppercase tracking-widest group-focus-within:text-blue-600 transition-colors">Date of Death</span>
-                            <div className="relative">
-                              <input type="date" value={formData.dateOfDeath} onChange={e => setFormData({...formData, dateOfDeath: e.target.value})} className="aura-admin-input h-12" />
-                            </div>
-                          </label>
+                          <AuraDatePicker 
+                            label="Date of Birth" 
+                            value={formData.dateOfBirth} 
+                            onChange={val => setFormData({...formData, dateOfBirth: val})} 
+                          />
+                          <AuraDatePicker 
+                            label="Date of Death" 
+                            value={formData.dateOfDeath} 
+                            onChange={val => setFormData({...formData, dateOfDeath: val})} 
+                          />
                         </div>
                         <input type="text" placeholder="Theology / Focus Area" value={formData.theologyFocus} onChange={e => setFormData({...formData, theologyFocus: e.target.value})} className="aura-admin-input" />
                         <textarea placeholder="Write their legacy..." rows="4" value={formData.biography} onChange={e => setFormData({...formData, biography: e.target.value})} className="aura-admin-input py-4"></textarea>
+                      </>
+                    )}
+
+                    {activeTab === 'missionaries' && (
+                      <>
+                        <input type="text" placeholder="Missionary Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="aura-admin-input h-12 md:h-14 text-base md:text-lg" required />
+                        <input type="text" placeholder="🌍 Field of Work (e.g. India, Africa)" value={formData.work} onChange={e => setFormData({...formData, work: e.target.value})} className="aura-admin-input h-12" />
+                        <input type="text" placeholder="📅 Service Period (e.g. 1850-1880)" value={formData.servicePeriod} onChange={e => setFormData({...formData, servicePeriod: e.target.value})} className="aura-admin-input" />
+                        <textarea placeholder="Their life history and impact..." rows="6" value={formData.lifeHistory} onChange={e => setFormData({...formData, lifeHistory: e.target.value})} className="aura-admin-input py-4"></textarea>
                       </>
                     )}
 
@@ -342,12 +352,11 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
                       <>
                         <input type="text" placeholder="Historical Moment" value={formData.eventName} onChange={e => setFormData({...formData, eventName: e.target.value})} className="aura-admin-input h-12 md:h-14 text-base md:text-lg" required />
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                          <label className="block space-y-1 group">
-                            <span className="text-[10px] font-black text-slate-400 px-2 uppercase tracking-widest group-focus-within:text-blue-600 transition-colors">Event Date</span>
-                            <div className="relative">
-                              <input type="date" value={formData.eventDate} onChange={e => setFormData({...formData, eventDate: e.target.value})} className="aura-admin-input h-12" />
-                            </div>
-                          </label>
+                          <AuraDatePicker 
+                            label="Event Date" 
+                            value={formData.eventDate} 
+                            onChange={val => setFormData({...formData, eventDate: val})} 
+                          />
                           <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="aura-admin-input mt-auto" />
                         </div>
                         <input type="text" placeholder="Significance / Impact" value={formData.significance} onChange={e => setFormData({...formData, significance: e.target.value})} className="aura-admin-input" />
@@ -401,3 +410,105 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
     </div>
   );
 }
+
+// PREMIUM CUSTOM DATE PICKER COMPONENT
+const AuraDatePicker = ({ label, value, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // Parse initial value or default to today
+  const [tempDate, setTempDate] = useState(() => {
+    if (value) {
+      const parts = value.split('-');
+      return { year: parts[0], month: parts[1], day: parts[2] };
+    }
+    const d = new Date();
+    return { 
+      year: String(d.getFullYear()), 
+      month: String(d.getMonth() + 1).padStart(2, '0'), 
+      day: String(d.getDate()).padStart(2, '0') 
+    };
+  });
+
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+  ];
+
+  const handleApply = () => {
+    const formatted = `${tempDate.year}-${tempDate.month}-${tempDate.day}`;
+    onChange(formatted);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="block space-y-1 group relative">
+      <span className="text-[10px] font-black text-slate-400 px-2 uppercase tracking-widest group-focus-within:text-blue-600 transition-colors italic">
+        {label}
+      </span>
+      <div 
+        onClick={() => setIsOpen(!isOpen)}
+        className="aura-admin-input h-12 flex items-center justify-between cursor-pointer group hover:border-blue-500/50 transition-all active:scale-95"
+      >
+        <span className={value ? "text-slate-800 dark:text-slate-200 font-bold" : "text-slate-400 italic"}>
+          {value ? `${tempDate.day} ${months[parseInt(tempDate.month)-1]} ${tempDate.year}` : "Select Date"}
+        </span>
+        <span className="text-blue-500 group-hover:scale-110 transition-transform">📅</span>
+      </div>
+
+      <AnimatePresence>
+        {isOpen && (
+          <>
+            <div className="fixed inset-0 z-[100]" onClick={() => setIsOpen(false)} />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 10 }}
+              className="absolute top-full left-0 right-0 mt-2 z-[101] aura-card p-4 shadow-2xl border border-blue-500/20 backdrop-blur-xl bg-white/90 dark:bg-slate-900/90"
+            >
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                <div className="flex flex-col space-y-1">
+                  <span className="text-[8px] font-black uppercase text-slate-400 text-center">Year</span>
+                  <input 
+                    type="number" 
+                    value={tempDate.year} 
+                    onChange={e => setTempDate({...tempDate, year: e.target.value})}
+                    className="bg-slate-100 dark:bg-white/5 border-none rounded-xl p-2 text-center font-bold text-sm"
+                  />
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <span className="text-[8px] font-black uppercase text-slate-400 text-center">Month</span>
+                  <select 
+                    value={tempDate.month} 
+                    onChange={e => setTempDate({...tempDate, month: e.target.value})}
+                    className="bg-slate-100 dark:bg-white/5 border-none rounded-xl p-2 text-center font-bold text-sm appearance-none"
+                  >
+                    {months.map((m, i) => (
+                      <option key={m} value={String(i + 1).padStart(2, '0')}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex flex-col space-y-1">
+                  <span className="text-[8px] font-black uppercase text-slate-400 text-center">Day</span>
+                  <input 
+                    type="number" 
+                    min="1" max="31"
+                    value={tempDate.day} 
+                    onChange={e => setTempDate({...tempDate, day: e.target.value.padStart(2, '0')})}
+                    className="bg-slate-100 dark:bg-white/5 border-none rounded-xl p-2 text-center font-bold text-sm"
+                  />
+                </div>
+              </div>
+              <button 
+                type="button"
+                onClick={handleApply}
+                className="w-full bg-blue-600 text-white rounded-xl py-2 text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
+              >
+                Apply Date
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
