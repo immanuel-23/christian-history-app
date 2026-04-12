@@ -45,3 +45,5 @@ hooks/
 *.jar
 *.war
 *.ear
+.metadata/
+node-v20.12.2-win-x64/
