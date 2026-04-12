@@ -1,0 +1,47 @@
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Dependency directories
+node_modules/
+jspm_packages/
+target/
+build/
+dist/
+out/
+bin/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Editor/IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.project
+.classpath
+.settings/
+.nb-gradle/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Mobile
+platforms/
+plugins/
+hooks/
+
+# Production artifacts
+*.jar
+*.war
+*.ear

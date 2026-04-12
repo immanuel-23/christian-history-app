@@ -1,0 +1,33 @@
+package com.christianhistory.app.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+import java.time.Year;
+
+@Data
+@Entity
+@Table(name = "churches")
+public class Church {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(columnDefinition = "TEXT")
+    private String location;
+
+    private Year yearEstablished;
+
+    @Column(columnDefinition = "TEXT")
+    private String denomination;
+
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
+    @Column(columnDefinition = "TEXT")
+    private String imageUrl;
+    
+}

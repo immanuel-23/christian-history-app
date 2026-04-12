@@ -1,0 +1,34 @@
+server:
+  port: 8080
+  tomcat:
+    max-http-post-size: 10MB
+
+spring:
+  application:
+    name: christian-history-backend
+  datasource:
+    url: jdbc:postgresql://aws-1-ap-southeast-2.pooler.supabase.com:5432/postgres
+    username: postgres.cglibjnheuolwjtrlzwv
+    password: "Trycatvh@@1234"
+    driver-class-name: org.postgresql.Driver
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+jwt:
+  secret: ${JWT_SECRET:8fdfd4304b126301beaf8263bf6be6b9e223b207eecc80fc93bc678a6358c278} # Random default 256-bit key for local
+  expirationMs: 86400000 # 1 day
+
+# Authentication is now managed via Database (admin_users table)
+
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}

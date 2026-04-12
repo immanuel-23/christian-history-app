@@ -1,0 +1,114 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-light: #ffffff;
+    --bg-dark: #0a0a0b;
+  }
+
+  body {
+    @apply transition-all duration-150 bg-white text-slate-900 dark:bg-[#08080a] dark:text-slate-100 antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  /* Premium Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 99px;
+    border: 4px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+  }
+}
+
+@layer components {
+  .aura-page-bg {
+    @apply bg-white dark:bg-[#08080a] text-slate-900 dark:text-slate-100;
+  }
+
+  .aura-header {
+    @apply sticky top-0 z-40 bg-white/70 dark:bg-black/60 backdrop-blur-md border-b border-slate-200 dark:border-white/5;
+  }
+
+  .aura-search-input {
+    @apply w-full bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-full px-12 py-2 focus:ring-2 focus:ring-blue-500/50 focus:outline-none transition-all placeholder:text-slate-400 dark:text-white;
+  }
+
+  .aura-tab-pill {
+    @apply px-6 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all opacity-60 hover:opacity-100 hover:bg-slate-100 dark:hover:bg-white/5;
+  }
+
+  .aura-tab-pill-active {
+    @apply bg-blue-600 text-white shadow-lg opacity-100;
+  }
+
+  .aura-card {
+    @apply cursor-pointer bg-white dark:bg-white/5 rounded-[2rem] overflow-hidden border border-slate-100 dark:border-white/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 hover:border-blue-500/30;
+  }
+
+  .aura-preacher-avatar-wrapper {
+    @apply w-32 h-32 mx-auto rounded-full p-1 border-2 border-blue-600 border-dashed transition-all mb-4 overflow-hidden;
+  }
+
+  .aura-event-row {
+    @apply flex items-center space-x-6 p-4 rounded-[2rem] bg-white dark:bg-white/5 border border-slate-100 dark:border-white/5 cursor-pointer transition-all hover:bg-slate-50 dark:hover:bg-white/10 hover:shadow-lg hover:translate-x-2;
+  }
+
+  .aura-modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-xl;
+  }
+
+  .aura-modal-container {
+    @apply bg-white dark:bg-[#0c0c0e] w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col md:flex-row max-h-[90vh] border dark:border-white/5;
+  }
+
+  .aura-badge {
+    @apply text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full;
+  }
+
+  .aura-btn-primary {
+    @apply bg-slate-900 dark:bg-blue-600 text-white px-6 py-2 rounded-full font-bold text-sm hover:opacity-90 transition-all hover:scale-105 shadow-md active:scale-95 text-center;
+  }
+
+  .aura-admin-input {
+    @apply w-full bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500/50 outline-none transition-all;
+  }
+
+  /* Modern Date Picker Overrides */
+  input[type="date"] {
+    @apply relative pr-10;
+  }
+
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    @apply absolute right-3 opacity-40 cursor-pointer hover:opacity-100 transition-opacity;
+    filter: invert(0.5); /* Neutral grey icons */
+  }
+
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* White icons for dark mode */
+  }
+}
+
+.card-shadow {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+}

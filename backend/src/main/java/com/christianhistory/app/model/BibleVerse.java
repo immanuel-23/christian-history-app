@@ -1,0 +1,19 @@
+package com.christianhistory.app.model;
+
+import jakarta.persistence.*;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "bible_verses")
+public class BibleVerse {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String verseText;
+
+    private String reference;
+}
