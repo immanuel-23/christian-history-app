@@ -415,10 +415,10 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
 const AuraDatePicker = ({ label, value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   
-  // Parse initial value or default to today
-  const [tempDate, setTempDate] = useState(() => {
-    if (value) {
-      const parts = value.split('-');
+  // Parse helper
+  const parseDate = (dStr) => {
+    if (dStr) {
+      const parts = dStr.split('-');
       return { year: parts[0], month: parts[1], day: parts[2] };
     }
     const d = new Date();
@@ -427,7 +427,14 @@ const AuraDatePicker = ({ label, value, onChange }) => {
       month: String(d.getMonth() + 1).padStart(2, '0'), 
       day: String(d.getDate()).padStart(2, '0') 
     };
-  });
+  };
+
+  const [tempDate, setTempDate] = useState(() => parseDate(value));
+
+  // CRITICAL: Sync internal state when external value changes (Fixes "stuck" UI)
+  useEffect(() => {
+    setTempDate(parseDate(value));
+  }, [value, isOpen]);
 
   const months = [
     "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
@@ -458,12 +465,14 @@ const AuraDatePicker = ({ label, value, onChange }) => {
       <AnimatePresence>
         {isOpen && (
           <>
-            <div className="fixed inset-0 z-[100]" onClick={() => setIsOpen(false)} />
+            {/* Backdrop to close and prevent background clicks */}
+            <div className="fixed inset-0 z-[9998]" onClick={() => setIsOpen(false)} />
+            
             <motion.div
               initial={{ opacity: 0, scale: 0.9, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 10 }}
-              className="absolute top-full left-0 right-0 mt-2 z-[101] aura-card p-4 shadow-2xl border border-blue-500/20 backdrop-blur-xl bg-white/90 dark:bg-slate-900/90"
+              className="absolute top-full left-0 right-0 mt-2 z-[9999] aura-card p-4 shadow-2xl border border-blue-500/30 backdrop-blur-2xl bg-white/95 dark:bg-slate-900/95"
             >
               <div className="grid grid-cols-3 gap-2 mb-4">
                 <div className="flex flex-col space-y-1">
@@ -472,7 +481,7 @@ const AuraDatePicker = ({ label, value, onChange }) => {
                     type="number" 
                     value={tempDate.year} 
                     onChange={e => setTempDate({...tempDate, year: e.target.value})}
-                    className="bg-slate-100 dark:bg-white/5 border-none rounded-xl p-2 text-center font-bold text-sm"
+                    className="bg-slate-100 dark:bg-white/10 border-none rounded-xl p-2 text-center font-bold text-sm focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
                 <div className="flex flex-col space-y-1">
@@ -480,7 +489,7 @@ const AuraDatePicker = ({ label, value, onChange }) => {
                   <select 
                     value={tempDate.month} 
                     onChange={e => setTempDate({...tempDate, month: e.target.value})}
-                    className="bg-slate-100 dark:bg-white/5 border-none rounded-xl p-2 text-center font-bold text-sm appearance-none"
+                    className="bg-slate-100 dark:bg-white/10 border-none rounded-xl p-2 text-center font-bold text-sm appearance-none focus:ring-1 focus:ring-blue-500"
                   >
                     {months.map((m, i) => (
                       <option key={m} value={String(i + 1).padStart(2, '0')}>{m}</option>
@@ -494,14 +503,14 @@ const AuraDatePicker = ({ label, value, onChange }) => {
                     min="1" max="31"
                     value={tempDate.day} 
                     onChange={e => setTempDate({...tempDate, day: e.target.value.padStart(2, '0')})}
-                    className="bg-slate-100 dark:bg-white/5 border-none rounded-xl p-2 text-center font-bold text-sm"
+                    className="bg-slate-100 dark:bg-white/10 border-none rounded-xl p-2 text-center font-bold text-sm focus:ring-1 focus:ring-blue-500"
                   />
                 </div>
               </div>
               <button 
                 type="button"
                 onClick={handleApply}
-                className="w-full bg-blue-600 text-white rounded-xl py-2 text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-500/20 active:scale-95 transition-all"
+                className="w-full bg-blue-600 text-white rounded-xl py-3 text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 shadow-lg shadow-blue-500/30 active:scale-95 transition-all"
               >
                 Apply Date
               </button>
