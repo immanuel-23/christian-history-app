@@ -132,28 +132,38 @@ export default function Home({ darkMode, setDarkMode }) {
         )}
       </AnimatePresence>
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Skeleton loader shown only while API data is loading */}
+      <main className="max-w-7xl mx-auto px-6 py-8 min-h-[400px] flex items-center justify-center">
+        {/* Premium Loader shown only in the data area */}
         {loading ? (
           <motion.div
-            key="skeleton"
+            key="inline-loader"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            className="flex flex-col items-center justify-center py-20"
           >
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="aura-card overflow-hidden animate-pulse">
-                {/* Image placeholder */}
-                <div className="h-56 bg-slate-200 dark:bg-slate-800 rounded-t-3xl" />
-                {/* Text placeholders */}
-                <div className="p-6 space-y-3">
-                  <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-full w-3/4" />
-                  <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full w-1/2" />
-                  <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full w-full" />
-                  <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full w-5/6" />
-                </div>
-              </div>
-            ))}
+            {/* Animated Cross / Logo */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+              className="w-16 h-16 rounded-2xl bg-blue-600 shadow-2xl shadow-blue-500/40 flex items-center justify-center mb-8"
+            >
+              <span className="text-white text-3xl font-black">✝</span>
+            </motion.div>
+
+            {/* Pulsing dots */}
+            <div className="flex space-x-2 mb-6">
+              {[0, 1, 2].map(i => (
+                <motion.div
+                  key={i}
+                  className="w-2.5 h-2.5 rounded-full bg-blue-600"
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+                  transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.2 }}
+                />
+              ))}
+            </div>
+
+            <p className="text-slate-400 text-sm font-semibold tracking-widest uppercase">Loading Archive...</p>
+            <p className="text-slate-300 dark:text-slate-600 text-xs mt-2 text-center">Connecting to server, please wait</p>
           </motion.div>
         ) : (
           <AnimatePresence mode="wait">
