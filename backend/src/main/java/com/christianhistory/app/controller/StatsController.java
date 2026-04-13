@@ -5,6 +5,8 @@ import com.christianhistory.app.repository.VisitorStatsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.christianhistory.app.service.StatsService;
+
 @RestController
 @RequestMapping("/api/stats")
 @CrossOrigin(origins = "*")
@@ -12,6 +14,9 @@ public class StatsController {
 
     @Autowired
     private VisitorStatsRepository statsRepository;
+
+    @Autowired
+    private StatsService statsService;
 
     @GetMapping
     public Long getVisitorCount() {
@@ -22,9 +27,6 @@ public class StatsController {
 
     @PostMapping("/increment")
     public void incrementCount() {
-        VisitorStats stats = statsRepository.findById(1L)
-                .orElse(new VisitorStats(1L, 0L));
-        stats.setVisitCount(stats.getVisitCount() + 1);
-        statsRepository.save(stats);
+        statsService.incrementVisitCount();
     }
 }

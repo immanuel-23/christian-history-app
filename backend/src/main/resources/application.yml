@@ -12,7 +12,7 @@ spring:
     password: "Trycatvh@@1234"
     driver-class-name: org.postgresql.Driver
     hikari:
-      maximum-pool-size: 3
+      maximum-pool-size: 10
       minimum-idle: 3
       connection-timeout: 30000
       idle-timeout: 600000
@@ -22,12 +22,13 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   jpa:
+    open-in-view: false
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: validate
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
 jwt:
