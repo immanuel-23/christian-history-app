@@ -141,11 +141,18 @@ export default function Home({ darkMode, setDarkMode }) {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-20"
           >
-            {/* Animated Cross / Logo */}
+            {/* Pulsing Cross / Logo */}
             <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-              className="w-16 h-16 rounded-2xl bg-blue-600 shadow-2xl shadow-blue-500/40 flex items-center justify-center mb-8"
+              animate={{ 
+                scale: [1, 1.1, 1],
+                boxShadow: [
+                  "0px 20px 40px rgba(37, 99, 235, 0.4)", 
+                  "0px 25px 50px rgba(37, 99, 235, 0.6)", 
+                  "0px 20px 40px rgba(37, 99, 235, 0.4)"
+                ]
+              }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
+              className="w-16 h-16 rounded-2xl bg-blue-600 flex items-center justify-center mb-8"
             >
               <span className="text-white text-3xl font-black">✝</span>
             </motion.div>
