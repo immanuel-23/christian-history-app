@@ -11,6 +11,7 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
   const [editId, setEditId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false); // For mobile sidebar
+  const [visitorCount, setVisitorCount] = useState(0);
   const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
   const [formData, setFormData] = useState({ 
     name: '', title: '', eventName: '', verseText: '', reference: '',
@@ -28,6 +29,7 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
       return;
     }
     fetchData();
+    fetchStats();
     setIsEditing(false);
     resetForm();
     setShowSidebar(false); // Close sidebar on tab change (mobile)
@@ -57,6 +59,17 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const res = await axios.get(`${apiBase}/stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setVisitorCount(res.data);
+    } catch (err) {
+      console.error("Error fetching stats:", err);
     }
   };
 
@@ -215,7 +228,17 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h1 className="text-3xl md:text-4xl font-black tracking-tight capitalize mb-1">Manage {activeTab.replace('-', ' ')}</h1>
-                <p className="text-slate-500 text-sm font-medium">Control and archive the historical data.</p>
+                <div className="flex items-center space-x-4">
+                  <p className="text-slate-500 text-sm font-medium">Control and archive the historical data.</p>
+                  <motion.div 
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    className="flex items-center space-x-2 bg-blue-50 dark:bg-blue-900/20 px-3 py-1 rounded-full border border-blue-200 dark:border-blue-800"
+                  >
+                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Total Visitors</span>
+                    <span className="text-sm font-black text-blue-700 dark:text-blue-400">{visitorCount.toLocaleString()}</span>
+                  </motion.div>
+                </div>
               </div>
               <a 
                 href="/" 

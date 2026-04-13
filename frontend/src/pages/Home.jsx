@@ -25,6 +25,14 @@ export default function Home({ darkMode, setDarkMode }) {
     axios.get(`${apiBase}/bible-verses`).then(res => {
       if (res.data.length > 0) setVerse(res.data[res.data.length - 1]);
     }).catch(console.error);
+
+    // Visit Tracking Logic
+    const hasVisited = sessionStorage.getItem('visited');
+    if (!hasVisited) {
+      axios.post(`${apiBase}/stats/increment`)
+        .then(() => sessionStorage.setItem('visited', 'true'))
+        .catch(console.error);
+    }
   }, []);
 
   const filterItems = (list, fields) => {
