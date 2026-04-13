@@ -29,7 +29,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> 
-                auth.requestMatchers("/api/auth/**", "/api/stats/increment").permitAll()
+                auth.requestMatchers("/", "/api/auth/**", "/api/stats/increment").permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/churches/**", "/api/preachers/**", "/api/missionaries/**", "/api/hymns/**", "/api/events/**", "/api/bible-verses/**").permitAll()
                     .anyRequest().authenticated()
             );
