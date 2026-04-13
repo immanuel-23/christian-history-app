@@ -30,7 +30,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> 
                 auth.requestMatchers("/api/auth/**").permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/churches/**", "/api/preachers/**", "/api/hymns/**", "/api/events/**", "/api/bible-verses/**").permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/churches/**", "/api/preachers/**", "/api/missionaries/**", "/api/hymns/**", "/api/events/**", "/api/bible-verses/**").permitAll()
                     .anyRequest().authenticated()
             );
 

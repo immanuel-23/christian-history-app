@@ -2,7 +2,9 @@ package com.christianhistory.app.controller;
 
 import com.christianhistory.app.model.HistoricalEvent;
 import com.christianhistory.app.repository.HistoricalEventRepository;
+import com.christianhistory.app.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,17 +18,24 @@ public class HistoricalEventController {
     @Autowired
     private HistoricalEventRepository eventRepository;
 
+    @Autowired
+    private CacheService cacheService;
+
     @GetMapping
+    @Cacheable("events")
     public List<HistoricalEvent> getAllEvents() {
         return eventRepository.findAll();
     }
 
     @PostMapping
     public HistoricalEvent createEvent(@RequestBody HistoricalEvent event) {
-        return eventRepository.save(event);
+        HistoricalEvent savedEvent = eventRepository.save(event);
+        cacheService.clearAllCaches();
+        return savedEvent;
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "events", key = "#id")
     public ResponseEntity<HistoricalEvent> getEventById(@PathVariable Long id) {
         return eventRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -43,7 +52,9 @@ public class HistoricalEventController {
                     event.setDescription(eventDetails.getDescription());
                     event.setSignificance(eventDetails.getSignificance());
                     event.setImageUrl(eventDetails.getImageUrl());
-                    return ResponseEntity.ok(eventRepository.save(event));
+                    HistoricalEvent updatedEvent = eventRepository.save(event);
+                    cacheService.clearAllCaches();
+                    return ResponseEntity.ok(updatedEvent);
                 }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -52,6 +63,7 @@ public class HistoricalEventController {
         return eventRepository.findById(id)
                 .map(event -> {
                     eventRepository.delete(event);
+                    cacheService.clearAllCaches();
                     return ResponseEntity.ok().build();
                 }).orElse(ResponseEntity.notFound().build());
     }

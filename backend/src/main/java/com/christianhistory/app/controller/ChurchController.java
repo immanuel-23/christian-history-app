@@ -2,7 +2,9 @@ package com.christianhistory.app.controller;
 
 import com.christianhistory.app.model.Church;
 import com.christianhistory.app.repository.ChurchRepository;
+import com.christianhistory.app.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,17 +18,24 @@ public class ChurchController {
     @Autowired
     private ChurchRepository churchRepository;
 
+    @Autowired
+    private CacheService cacheService;
+
     @GetMapping
+    @Cacheable("churches")
     public List<Church> getAllChurches() {
         return churchRepository.findAll();
     }
 
     @PostMapping
     public Church createChurch(@RequestBody Church church) {
-        return churchRepository.save(church);
+        Church savedChurch = churchRepository.save(church);
+        cacheService.clearAllCaches();
+        return savedChurch;
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "churches", key = "#id")
     public ResponseEntity<Church> getChurchById(@PathVariable Long id) {
         return churchRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -43,7 +52,9 @@ public class ChurchController {
                     church.setDenomination(churchDetails.getDenomination());
                     church.setDescription(churchDetails.getDescription());
                     church.setImageUrl(churchDetails.getImageUrl());
-                    return ResponseEntity.ok(churchRepository.save(church));
+                    Church updatedChurch = churchRepository.save(church);
+                    cacheService.clearAllCaches();
+                    return ResponseEntity.ok(updatedChurch);
                 }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -52,6 +63,7 @@ public class ChurchController {
         return churchRepository.findById(id)
                 .map(church -> {
                     churchRepository.delete(church);
+                    cacheService.clearAllCaches();
                     return ResponseEntity.ok().build();
                 }).orElse(ResponseEntity.notFound().build());
     }

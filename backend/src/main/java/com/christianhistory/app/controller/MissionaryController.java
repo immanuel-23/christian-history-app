@@ -2,7 +2,9 @@ package com.christianhistory.app.controller;
 
 import com.christianhistory.app.model.Missionary;
 import com.christianhistory.app.repository.MissionaryRepository;
+import com.christianhistory.app.service.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,17 +18,24 @@ public class MissionaryController {
     @Autowired
     private MissionaryRepository missionaryRepository;
 
+    @Autowired
+    private CacheService cacheService;
+
     @GetMapping
+    @Cacheable("missionaries")
     public List<Missionary> getAllMissionaries() {
         return missionaryRepository.findAll();
     }
 
     @PostMapping
     public Missionary createMissionary(@RequestBody Missionary missionary) {
-        return missionaryRepository.save(missionary);
+        Missionary savedMissionary = missionaryRepository.save(missionary);
+        cacheService.clearAllCaches();
+        return savedMissionary;
     }
 
     @GetMapping("/{id}")
+    @Cacheable(value = "missionaries", key = "#id")
     public ResponseEntity<Missionary> getMissionaryById(@PathVariable Long id) {
         return missionaryRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -42,7 +51,9 @@ public class MissionaryController {
                     missionary.setLifeHistory(missionaryDetails.getLifeHistory());
                     missionary.setServicePeriod(missionaryDetails.getServicePeriod());
                     missionary.setImageUrl(missionaryDetails.getImageUrl());
-                    return ResponseEntity.ok(missionaryRepository.save(missionary));
+                    Missionary updatedMissionary = missionaryRepository.save(missionary);
+                    cacheService.clearAllCaches();
+                    return ResponseEntity.ok(updatedMissionary);
                 }).orElse(ResponseEntity.notFound().build());
     }
 
@@ -51,6 +62,7 @@ public class MissionaryController {
         return missionaryRepository.findById(id)
                 .map(missionary -> {
                     missionaryRepository.delete(missionary);
+                    cacheService.clearAllCaches();
                     return ResponseEntity.ok().build();
                 }).orElse(ResponseEntity.notFound().build());
     }
