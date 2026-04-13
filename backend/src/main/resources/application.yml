@@ -15,7 +15,7 @@ spring:
     hikari:
       maximum-pool-size: 5
       minimum-idle: 1
-      connection-timeout: 30000
+      connection-timeout: 60000
       idle-timeout: 600000
       max-lifetime: 1800000
   servlet:
@@ -30,7 +30,8 @@ spring:
     properties:
       hibernate:
         format_sql: false
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        temp:
+          use_jdbc_metadata_defaults: false
 
 jwt:
   secret: ${JWT_SECRET:8fdfd4304b126301beaf8263bf6be6b9e223b207eecc80fc93bc678a6358c278} # Random default 256-bit key for local
