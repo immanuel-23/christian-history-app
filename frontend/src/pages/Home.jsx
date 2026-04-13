@@ -9,6 +9,7 @@ export default function Home({ darkMode, setDarkMode }) {
   const [events, setEvents] = useState([]);
   const [missionaries, setMissionaries] = useState([]);
   const [verse, setVerse] = useState(null);
+  const [loading, setLoading] = useState(true); // Global loading state
 
   const [activeTab, setActiveTab] = useState('churches');
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,14 +18,20 @@ export default function Home({ darkMode, setDarkMode }) {
 
   useEffect(() => {
     const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
-    axios.get(`${apiBase}/churches`).then(res => setChurches(res.data)).catch(console.error);
-    axios.get(`${apiBase}/preachers`).then(res => setPreachers(res.data)).catch(console.error);
-    axios.get(`${apiBase}/hymns`).then(res => setHymns(res.data)).catch(console.error);
-    axios.get(`${apiBase}/events`).then(res => setEvents(res.data)).catch(console.error);
-    axios.get(`${apiBase}/missionaries`).then(res => setMissionaries(res.data)).catch(console.error);
-    axios.get(`${apiBase}/bible-verses`).then(res => {
-      if (res.data.length > 0) setVerse(res.data[res.data.length - 1]);
-    }).catch(console.error);
+
+    // Fetch all data in parallel and mark loading done when all finish
+    Promise.all([
+      axios.get(`${apiBase}/churches`).then(res => setChurches(res.data)),
+      axios.get(`${apiBase}/preachers`).then(res => setPreachers(res.data)),
+      axios.get(`${apiBase}/hymns`).then(res => setHymns(res.data)),
+      axios.get(`${apiBase}/events`).then(res => setEvents(res.data)),
+      axios.get(`${apiBase}/missionaries`).then(res => setMissionaries(res.data)),
+      axios.get(`${apiBase}/bible-verses`).then(res => {
+        if (res.data.length > 0) setVerse(res.data[res.data.length - 1]);
+      }),
+    ])
+      .catch(console.error)
+      .finally(() => setLoading(false)); // Hide loader when done (or on error)
 
     // Visit Tracking Logic
     const hasVisited = sessionStorage.getItem('visited');
@@ -53,6 +60,42 @@ export default function Home({ darkMode, setDarkMode }) {
 
   return (
     <div className="min-h-screen">
+
+      {/* Full-page Premium Loading Screen */}
+      <AnimatePresence>
+        {loading && (
+          <motion.div
+            key="loader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 0.6 } }}
+            className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-slate-950"
+          >
+            {/* Animated Cross / Logo */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+              className="w-16 h-16 rounded-2xl bg-blue-600 shadow-2xl shadow-blue-500/40 flex items-center justify-center mb-8"
+            >
+              <span className="text-white text-3xl font-black">✝</span>
+            </motion.div>
+
+            {/* Pulsing dots */}
+            <div className="flex space-x-2 mb-6">
+              {[0, 1, 2].map(i => (
+                <motion.div
+                  key={i}
+                  className="w-2.5 h-2.5 rounded-full bg-blue-600"
+                  animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
+                  transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.2 }}
+                />
+              ))}
+            </div>
+
+            <p className="text-slate-400 text-sm font-semibold tracking-widest uppercase">Loading Archive...</p>
+            <p className="text-slate-300 dark:text-slate-600 text-xs mt-2">Connecting to server, please wait</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Navigation Header */}
       <header className="aura-header px-6 py-4">
