@@ -389,7 +389,24 @@ export default function AdminDashboard({ darkMode, setDarkMode }) {
 
                     {activeTab === 'bible-verses' && (
                       <>
-                        <textarea placeholder="Welcome Message / Bible Verse" rows="6" value={formData.verseText} onChange={e => setFormData({...formData, verseText: e.target.value})} className="aura-admin-input py-6 text-lg italic text-center" required></textarea>
+                        {/* Category Selector — which tab this verse belongs to */}
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-black text-slate-400 px-2 uppercase tracking-widest">Section / Tab</span>
+                          <select
+                            value={formData.category || 'general'}
+                            onChange={e => setFormData({...formData, category: e.target.value})}
+                            className="aura-admin-input h-12 appearance-none"
+                            required
+                          >
+                            <option value="general">🌐 General (All Pages)</option>
+                            <option value="churches">⛪ Churches Section</option>
+                            <option value="preachers">👤 Preachers Section</option>
+                            <option value="missionaries">🌍 Missionaries Section</option>
+                            <option value="hymns">🎶 Hymns Section</option>
+                            <option value="events">📜 Moments Section</option>
+                          </select>
+                        </div>
+                        <textarea placeholder="Welcome Message / Bible Verse" rows="5" value={formData.verseText} onChange={e => setFormData({...formData, verseText: e.target.value})} className="aura-admin-input py-6 text-lg italic text-center" required></textarea>
                         <input type="text" placeholder="Reference (e.g. John 3:16)" value={formData.reference} onChange={e => setFormData({...formData, reference: e.target.value})} className="aura-admin-input text-center font-black" required />
                       </>
                     )}

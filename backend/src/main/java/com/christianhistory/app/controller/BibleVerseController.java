@@ -27,6 +27,13 @@ public class BibleVerseController {
         return bibleVerseRepository.findAll();
     }
 
+    // Get verses filtered by category (e.g. /api/bible-verses/category/churches)
+    @GetMapping("/category/{category}")
+    @Cacheable(value = "bible-verses-category", key = "#category")
+    public List<BibleVerse> getVersesByCategory(@PathVariable String category) {
+        return bibleVerseRepository.findByCategory(category);
+    }
+
     @PostMapping
     public BibleVerse createVerse(@RequestBody BibleVerse verse) {
         BibleVerse savedVerse = bibleVerseRepository.save(verse);
@@ -40,6 +47,7 @@ public class BibleVerseController {
                 .map(verse -> {
                     verse.setVerseText(verseDetails.getVerseText());
                     verse.setReference(verseDetails.getReference());
+                    verse.setCategory(verseDetails.getCategory());
                     BibleVerse updatedVerse = bibleVerseRepository.save(verse);
                     cacheService.clearAllCaches();
                     return ResponseEntity.ok(updatedVerse);

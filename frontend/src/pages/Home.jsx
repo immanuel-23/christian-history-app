@@ -8,7 +8,7 @@ export default function Home({ darkMode, setDarkMode }) {
   const [hymns, setHymns] = useState([]);
   const [events, setEvents] = useState([]);
   const [missionaries, setMissionaries] = useState([]);
-  const [verse, setVerse] = useState(null);
+  const [allVerses, setAllVerses] = useState([]);
   const [loading, setLoading] = useState(true); // Global loading state
 
   const [activeTab, setActiveTab] = useState('churches');
@@ -26,9 +26,7 @@ export default function Home({ darkMode, setDarkMode }) {
       axios.get(`${apiBase}/hymns`).then(res => setHymns(res.data)),
       axios.get(`${apiBase}/events`).then(res => setEvents(res.data)),
       axios.get(`${apiBase}/missionaries`).then(res => setMissionaries(res.data)),
-      axios.get(`${apiBase}/bible-verses`).then(res => {
-        if (res.data.length > 0) setVerse(res.data[res.data.length - 1]);
-      }),
+      axios.get(`${apiBase}/bible-verses`).then(res => setAllVerses(res.data)),
     ])
       .catch(console.error)
       .finally(() => setLoading(false)); // Hide loader when done (or on error)
@@ -57,6 +55,11 @@ export default function Home({ darkMode, setDarkMode }) {
     { id: 'hymns', name: 'Hymns', icon: '🎶' },
     { id: 'events', name: 'Moments', icon: '📜' },
   ];
+
+  // Pick the verse for the active tab, falling back to 'general' if no tab-specific verse exists
+  const verse = allVerses.find(v => v.category === activeTab)
+    || allVerses.find(v => v.category === 'general')
+    || (allVerses.length > 0 ? allVerses[allVerses.length - 1] : null);
 
   return (
     <div className="min-h-screen">

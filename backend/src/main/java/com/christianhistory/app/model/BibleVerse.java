@@ -16,4 +16,8 @@ public class BibleVerse {
     private String verseText;
 
     private String reference;
+
+    // Category maps to a tab: churches, preachers, missionaries, hymns, events, or general
+    @Column(nullable = false)
+    private String category = "general";
 }
