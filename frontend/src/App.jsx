@@ -16,6 +16,16 @@ function App() {
     }
   }, [darkMode]);
 
+  // Keep-alive ping: prevents Render free tier from sleeping
+  // Sends a lightweight GET to the health endpoint every 10 minutes
+  useEffect(() => {
+    const backendUrl = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:8080';
+    const ping = () => fetch(`${backendUrl}/`).catch(() => {});
+    ping(); // Ping immediately on app load
+    const interval = setInterval(ping, 10 * 60 * 1000); // Then every 10 minutes
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, []);
+
   return (
     <Router>
       <Routes>
