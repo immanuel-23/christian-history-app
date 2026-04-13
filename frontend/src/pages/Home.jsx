@@ -195,16 +195,22 @@ export default function Home({ darkMode, setDarkMode }) {
               </motion.div>
             )}
 
-            {/* Hymns View — Compact Music Library Style */}
+            {/* Hymns View — Premium Music Library Style */}
             {activeTab === 'hymns' && (
               <motion.div key="hymns" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto">
-                {/* Column Header */}
-                <div className="flex items-center px-4 py-2 mb-2 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 border-b border-slate-200 dark:border-slate-800">
-                  <span className="w-10 text-center">#</span>
-                  <span className="flex-1 ml-4">Title</span>
-                  <span className="w-40 hidden md:block">Author</span>
-                  <span className="w-20 hidden md:block text-right">Year</span>
+                {/* Section Header */}
+                <div className="flex items-center justify-between mb-4 px-3">
+                  <div>
+                    <h2 className="text-2xl font-black tracking-tight">🎶 Hymn Collection</h2>
+                    <p className="text-xs text-slate-400 mt-0.5">{filterItems(hymns, ['title', 'author', 'lyrics']).length} hymns</p>
+                  </div>
+                  <div className="flex items-center space-x-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    <span className="hidden md:block w-[140px] text-right">Author</span>
+                    <span className="hidden lg:block w-16 text-right ml-3">Year</span>
+                  </div>
                 </div>
+                {/* Subtle divider */}
+                <div className="h-px bg-gradient-to-r from-transparent via-slate-200 dark:via-slate-700 to-transparent mb-2" />
                 {/* Hymn Rows */}
                 {filterItems(hymns, ['title', 'author', 'lyrics']).map((hymn, index) => (
                   <HymnRow key={hymn.id} hymn={hymn} index={index + 1} onClick={() => setSelectedItem({ ...hymn, type: 'hymn' })} />
@@ -267,37 +273,54 @@ const Card = ({ item, type, onClick }) => (
   </motion.div>
 );
 
-// Compact hymn row — music library style, optimized for 1000+ entries
+// Premium Spotify-style hymn row — compact but visually rich
 const HymnRow = ({ hymn, index, onClick }) => (
   <motion.div
-    whileHover={{ x: 4, backgroundColor: 'rgba(59, 130, 246, 0.06)' }}
+    whileHover={{ backgroundColor: 'rgba(59, 130, 246, 0.07)', x: 2 }}
     onClick={onClick}
-    className="flex items-center px-4 py-3 rounded-xl cursor-pointer group transition-colors border-b border-slate-100 dark:border-slate-800/50"
+    className="flex items-center px-3 py-2.5 rounded-xl cursor-pointer group transition-all duration-200"
   >
-    {/* Row Number */}
-    <span className="w-10 text-center text-sm font-semibold text-slate-300 dark:text-slate-600 group-hover:text-blue-500 transition-colors">
-      {index}
-    </span>
-
-    {/* Music Icon */}
-    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center ml-2 shrink-0 shadow-md shadow-blue-500/20">
-      <span className="text-white text-sm">🎶</span>
+    {/* Index / Play Icon */}
+    <div className="w-8 flex items-center justify-center shrink-0">
+      <span className="text-xs font-bold text-slate-400 dark:text-slate-600 group-hover:hidden">{index}</span>
+      <span className="hidden group-hover:block text-blue-500 text-base">▶</span>
     </div>
 
-    {/* Title & Preview */}
-    <div className="flex-1 ml-4 min-w-0">
-      <h3 className="font-bold text-sm truncate group-hover:text-blue-600 transition-colors">{hymn.title}</h3>
-      <p className="text-xs text-slate-400 dark:text-slate-500 truncate">{hymn.lyrics?.substring(0, 60)}...</p>
+    {/* Album Art Style Icon with gradient */}
+    <div className="w-11 h-11 ml-2 rounded-xl shrink-0 overflow-hidden relative">
+      <div className="w-full h-full bg-gradient-to-br from-indigo-500 via-blue-600 to-violet-600 flex items-center justify-center shadow-lg">
+        <span className="text-white text-lg">♪</span>
+      </div>
+      {/* Gloss overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-white/10 rounded-xl" />
     </div>
 
-    {/* Author */}
-    <span className="w-40 text-sm text-slate-500 dark:text-slate-400 truncate hidden md:block">{hymn.author}</span>
+    {/* Title & Lyrics Preview */}
+    <div className="flex-1 ml-3 min-w-0">
+      <h3 className="font-bold text-sm text-slate-800 dark:text-slate-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+        {hymn.title}
+      </h3>
+      <p className="text-[11px] text-slate-400 dark:text-slate-500 truncate mt-0.5">
+        {hymn.lyrics?.substring(0, 55) || 'No lyrics preview'}...
+      </p>
+    </div>
 
-    {/* Year */}
-    <span className="w-20 text-sm text-slate-400 dark:text-slate-500 text-right hidden md:block">{hymn.yearWritten || '—'}</span>
+    {/* Author Chip */}
+    {hymn.author && (
+      <span className="hidden md:flex items-center ml-3 text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-white/5 px-3 py-1 rounded-full shrink-0 max-w-[140px] truncate">
+        ✍️ {hymn.author}
+      </span>
+    )}
 
-    {/* Hover Arrow */}
-    <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-4 text-blue-500 text-sm">→</div>
+    {/* Year Badge */}
+    {hymn.yearWritten && (
+      <span className="hidden lg:block ml-3 text-[11px] font-bold text-indigo-500 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20 px-2.5 py-1 rounded-full shrink-0">
+        {hymn.yearWritten}
+      </span>
+    )}
+
+    {/* Arrow on hover */}
+    <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-3 text-blue-500">›</div>
   </motion.div>
 );
 
