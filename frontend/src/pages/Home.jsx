@@ -61,42 +61,6 @@ export default function Home({ darkMode, setDarkMode }) {
   return (
     <div className="min-h-screen">
 
-      {/* Full-page Premium Loading Screen */}
-      <AnimatePresence>
-        {loading && (
-          <motion.div
-            key="loader"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.6 } }}
-            className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-slate-950"
-          >
-            {/* Animated Cross / Logo */}
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-              className="w-16 h-16 rounded-2xl bg-blue-600 shadow-2xl shadow-blue-500/40 flex items-center justify-center mb-8"
-            >
-              <span className="text-white text-3xl font-black">✝</span>
-            </motion.div>
-
-            {/* Pulsing dots */}
-            <div className="flex space-x-2 mb-6">
-              {[0, 1, 2].map(i => (
-                <motion.div
-                  key={i}
-                  className="w-2.5 h-2.5 rounded-full bg-blue-600"
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.4, 1, 0.4] }}
-                  transition={{ repeat: Infinity, duration: 1.2, delay: i * 0.2 }}
-                />
-              ))}
-            </div>
-
-            <p className="text-slate-400 text-sm font-semibold tracking-widest uppercase">Loading Archive...</p>
-            <p className="text-slate-300 dark:text-slate-600 text-xs mt-2">Connecting to server, please wait</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Navigation Header */}
       <header className="aura-header px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -169,52 +133,76 @@ export default function Home({ darkMode, setDarkMode }) {
       </AnimatePresence>
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        <AnimatePresence mode="wait">
-          {/* Churches View */}
-          {activeTab === 'churches' && (
-            <motion.div key="churches" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {filterItems(churches, ['name', 'location', 'denomination', 'description']).map(church => (
-                <Card key={church.id} item={church} type="church" onClick={() => setSelectedItem({ ...church, type: 'church' })} />
-              ))}
-            </motion.div>
-          )}
+        {/* Skeleton loader shown only while API data is loading */}
+        {loading ? (
+          <motion.div
+            key="skeleton"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+          >
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="aura-card overflow-hidden animate-pulse">
+                {/* Image placeholder */}
+                <div className="h-56 bg-slate-200 dark:bg-slate-800 rounded-t-3xl" />
+                {/* Text placeholders */}
+                <div className="p-6 space-y-3">
+                  <div className="h-5 bg-slate-200 dark:bg-slate-800 rounded-full w-3/4" />
+                  <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full w-1/2" />
+                  <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full w-full" />
+                  <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded-full w-5/6" />
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        ) : (
+          <AnimatePresence mode="wait">
+            {/* Churches View */}
+            {activeTab === 'churches' && (
+              <motion.div key="churches" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {filterItems(churches, ['name', 'location', 'denomination', 'description']).map(church => (
+                  <Card key={church.id} item={church} type="church" onClick={() => setSelectedItem({ ...church, type: 'church' })} />
+                ))}
+              </motion.div>
+            )}
 
-          {/* Preachers View */}
-          {activeTab === 'preachers' && (
-            <motion.div key="preachers" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-              {filterItems(preachers, ['name', 'biography', 'theologyFocus']).map(preacher => (
-                <PreacherCard key={preacher.id} preacher={preacher} onClick={() => setSelectedItem({ ...preacher, type: 'preacher' })} />
-              ))}
-            </motion.div>
-          )}
+            {/* Preachers View */}
+            {activeTab === 'preachers' && (
+              <motion.div key="preachers" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                {filterItems(preachers, ['name', 'biography', 'theologyFocus']).map(preacher => (
+                  <PreacherCard key={preacher.id} preacher={preacher} onClick={() => setSelectedItem({ ...preacher, type: 'preacher' })} />
+                ))}
+              </motion.div>
+            )}
 
-          {/* Hymns View */}
-          {activeTab === 'hymns' && (
-            <motion.div key="hymns" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filterItems(hymns, ['title', 'author', 'lyrics']).map(hymn => (
-                <Card key={hymn.id} item={hymn} type="hymn" onClick={() => setSelectedItem({ ...hymn, type: 'hymn' })} />
-              ))}
-            </motion.div>
-          )}
+            {/* Hymns View */}
+            {activeTab === 'hymns' && (
+              <motion.div key="hymns" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filterItems(hymns, ['title', 'author', 'lyrics']).map(hymn => (
+                  <Card key={hymn.id} item={hymn} type="hymn" onClick={() => setSelectedItem({ ...hymn, type: 'hymn' })} />
+                ))}
+              </motion.div>
+            )}
 
-          {/* Events View */}
-          {activeTab === 'events' && (
-            <motion.div key="events" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4 max-w-4xl mx-auto">
-              {filterItems(events, ['eventName', 'description', 'significance']).map(event => (
-                <EventRow key={event.id} event={event} onClick={() => setSelectedItem({ ...event, type: 'event' })} />
-              ))}
-            </motion.div>
-          )}
+            {/* Events View */}
+            {activeTab === 'events' && (
+              <motion.div key="events" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4 max-w-4xl mx-auto">
+                {filterItems(events, ['eventName', 'description', 'significance']).map(event => (
+                  <EventRow key={event.id} event={event} onClick={() => setSelectedItem({ ...event, type: 'event' })} />
+                ))}
+              </motion.div>
+            )}
 
-          {/* Missionaries View */}
-          {activeTab === 'missionaries' && (
-            <motion.div key="missionaries" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filterItems(missionaries, ['name', 'work', 'lifeHistory']).map(missionary => (
-                <Card key={missionary.id} item={missionary} type="missionary" onClick={() => setSelectedItem({ ...missionary, type: 'missionary' })} />
-              ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+            {/* Missionaries View */}
+            {activeTab === 'missionaries' && (
+              <motion.div key="missionaries" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filterItems(missionaries, ['name', 'work', 'lifeHistory']).map(missionary => (
+                  <Card key={missionary.id} item={missionary} type="missionary" onClick={() => setSelectedItem({ ...missionary, type: 'missionary' })} />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </main>
 
       {/* Detail Modal */}
