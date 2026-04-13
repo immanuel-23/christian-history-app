@@ -192,11 +192,19 @@ export default function Home({ darkMode, setDarkMode }) {
               </motion.div>
             )}
 
-            {/* Hymns View */}
+            {/* Hymns View — Compact Music Library Style */}
             {activeTab === 'hymns' && (
-              <motion.div key="hymns" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filterItems(hymns, ['title', 'author', 'lyrics']).map(hymn => (
-                  <Card key={hymn.id} item={hymn} type="hymn" onClick={() => setSelectedItem({ ...hymn, type: 'hymn' })} />
+              <motion.div key="hymns" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="max-w-4xl mx-auto">
+                {/* Column Header */}
+                <div className="flex items-center px-4 py-2 mb-2 text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 border-b border-slate-200 dark:border-slate-800">
+                  <span className="w-10 text-center">#</span>
+                  <span className="flex-1 ml-4">Title</span>
+                  <span className="w-40 hidden md:block">Author</span>
+                  <span className="w-20 hidden md:block text-right">Year</span>
+                </div>
+                {/* Hymn Rows */}
+                {filterItems(hymns, ['title', 'author', 'lyrics']).map((hymn, index) => (
+                  <HymnRow key={hymn.id} hymn={hymn} index={index + 1} onClick={() => setSelectedItem({ ...hymn, type: 'hymn' })} />
                 ))}
               </motion.div>
             )}
@@ -253,6 +261,40 @@ const Card = ({ item, type, onClick }) => (
         {item.description || item.lyrics || item.lifeHistory}
       </p>
     </div>
+  </motion.div>
+);
+
+// Compact hymn row — music library style, optimized for 1000+ entries
+const HymnRow = ({ hymn, index, onClick }) => (
+  <motion.div
+    whileHover={{ x: 4, backgroundColor: 'rgba(59, 130, 246, 0.06)' }}
+    onClick={onClick}
+    className="flex items-center px-4 py-3 rounded-xl cursor-pointer group transition-colors border-b border-slate-100 dark:border-slate-800/50"
+  >
+    {/* Row Number */}
+    <span className="w-10 text-center text-sm font-semibold text-slate-300 dark:text-slate-600 group-hover:text-blue-500 transition-colors">
+      {index}
+    </span>
+
+    {/* Music Icon */}
+    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center ml-2 shrink-0 shadow-md shadow-blue-500/20">
+      <span className="text-white text-sm">🎶</span>
+    </div>
+
+    {/* Title & Preview */}
+    <div className="flex-1 ml-4 min-w-0">
+      <h3 className="font-bold text-sm truncate group-hover:text-blue-600 transition-colors">{hymn.title}</h3>
+      <p className="text-xs text-slate-400 dark:text-slate-500 truncate">{hymn.lyrics?.substring(0, 60)}...</p>
+    </div>
+
+    {/* Author */}
+    <span className="w-40 text-sm text-slate-500 dark:text-slate-400 truncate hidden md:block">{hymn.author}</span>
+
+    {/* Year */}
+    <span className="w-20 text-sm text-slate-400 dark:text-slate-500 text-right hidden md:block">{hymn.yearWritten || '—'}</span>
+
+    {/* Hover Arrow */}
+    <div className="opacity-0 group-hover:opacity-100 transition-opacity ml-4 text-blue-500 text-sm">→</div>
   </motion.div>
 );
 
